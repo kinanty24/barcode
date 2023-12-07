@@ -193,12 +193,12 @@
                     success: function(res) {
                         // console.log(res);
 
+                        // console.log(e)
 
 
 
 
                         if (res['status'] == 200) {
-                            html5QrcodeScanner.clear();
 
                             Swal.fire({
                                 title: "Terima Kasih!",
@@ -213,7 +213,7 @@
                             });
 
                         } else {
-                            html5QrcodeScanner.clear();
+
 
                             Swal.fire({
                                 title: "Absen Gagal",
@@ -231,6 +231,7 @@
 
                     }
                 })
+                html5QrcodeScanner.clear();
             }
 
             // function onScanFailure(error) {
