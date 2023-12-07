@@ -1,6 +1,6 @@
-@extends("layouts.master")
+@extends('layouts.master')
 
-@section("content")
+@section('content')
     <style>
         .content {
             display: inline-flex;
@@ -14,14 +14,34 @@
         #reader {
             border: 0 !important;
         }
-    </style>
 
+        #loading {
+            position: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0.7;
+            background-color: #fff;
+            z-index: 99;
+        }
+
+        #loading-image {
+            z-index: 100;
+        }
+    </style>
+    <div id="loading">
+        <img id="loading-image" src="{{ asset('template/assets/loader.gif') }}" alt="Loading..." />
+    </div>
     <main id="main" class="main">
         <div class="pagetitle">
             <h1>{{ $title }}</h1>
             <nav>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ url("home") }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url('home') }}">Home</a></li>
                     <li class="breadcrumb-item active">{{ $title }}</li>
                 </ol>
             </nav>
@@ -52,12 +72,12 @@
                                     <tr>
                                         <td>Jam Masuk</td>
                                         <td>:</td>
-                                        <td>{{ date("H:i", strtotime($dosen->start)) }}</td>
+                                        <td>{{ date('H:i', strtotime($dosen->start)) }}</td>
                                     </tr>
                                     <tr>
                                         <td>Dosen</td>
                                         <td>:</td>
-                                        <td>{{ date("H:i", strtotime($dosen->end)) }}</td>
+                                        <td>{{ date('H:i', strtotime($dosen->end)) }}</td>
                                     </tr>
                                 </table>
                                 <center>
@@ -65,7 +85,7 @@
 
                                     <div>
 
-                                        {!! DNS2D::getBarcodeHTML((string) $dosen->barcode, "QRCODE", 17, 17) !!}
+                                        {!! DNS2D::getBarcodeHTML((string) $dosen->barcode, 'QRCODE', 17, 17) !!}
                                     </div>
                                 </center>
                             </div>
@@ -75,6 +95,7 @@
             </section>
         @endif
         @if (auth()->user()->role_id == 3)
+            <span class="loader"></span>
             <section class="section">
                 <div class="row">
                     <div class="col-lg-6">
@@ -101,7 +122,7 @@
                                     <tr>
                                         <td>Tanggal Lahir</td>
                                         <td>:</td>
-                                        <td>{{ date("d - m - y", strtotime($mahasiswa->ttl)) }}</td>
+                                        <td>{{ date('d - m - y', strtotime($mahasiswa->ttl)) }}</td>
                                     </tr>
                                     <tr>
                                         <td>Jenis Kelamin</td>
@@ -137,25 +158,48 @@
     </main><!-- End #main -->
 @endsection
 
-@section("js")
+@section('js')
     @if (auth()->user()->role_id == 3)
         <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
         <script type="text/javascript">
-            function onScanSuccess(decodedText, decodedResult) {
+            $(document).ready(function() {
+                $('#loading').hide();
+            })
+            let html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", {
+                    fps: 10,
+                    qrbox: {
+                        width: 250,
+                        height: 250
+                    }
+                },
+                /* verbose= */
+                false);
+
+            function onScanSuccess(decodedText, decodedResult, event) {
+                // event.preventDefault();
                 // handle the scanned code as you like, for example:
                 // console.log(`Code matched = ${decodedText}`, decodedResult);
                 $.ajax({
-                    url: `{{ route("absensi") }}`,
+                    url: `{{ route('absensi') }}`,
                     type: 'POST',
                     data: {
                         _methode: 'POST',
                         _token: `{{ csrf_token() }}`,
                         code: decodedText,
                     },
+
                     success: function(res) {
                         // console.log(res);
+
+
+
+
+
                         if (res['status'] == 200) {
+                            html5QrcodeScanner.clear();
+
                             Swal.fire({
                                 title: "Terima Kasih!",
                                 text: "Anda Telah Berhasil Absen Mata Kuliah " + res['data']['matkul'][
@@ -164,10 +208,13 @@
                                 icon: "success"
                             }).then(function(result) {
                                 if (true) {
-                                    window.location = `{{ route("home") }}`;
+                                    window.location = `{{ route('home') }}`;
                                 }
                             });
+
                         } else {
+                            html5QrcodeScanner.clear();
+
                             Swal.fire({
                                 title: "Absen Gagal",
                                 text: "Hari ini anda telah absen mata kuliah " + res['data']['matkul'][
@@ -176,9 +223,10 @@
                                 icon: "error"
                             }).then(function(result) {
                                 if (true) {
-                                    window.location = `{{ route("home") }}`;
+                                    window.location = `{{ route('home') }}`;
                                 }
                             });
+
                         }
 
                     }
@@ -190,16 +238,7 @@
             //     // for example:
             //     console.warn(`Code scan error = ${error}`);
             // }
-            let html5QrcodeScanner = new Html5QrcodeScanner(
-                "reader", {
-                    fps: 10,
-                    qrbox: {
-                        width: 250,
-                        height: 250
-                    }
-                },
-                /* verbose= */
-                false);
+
             html5QrcodeScanner.render(onScanSuccess);
         </script>
     @endif
