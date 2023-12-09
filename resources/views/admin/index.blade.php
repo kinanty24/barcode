@@ -159,13 +159,15 @@
 @endsection
 
 @section('js')
+    <script>
+        $(document).ready(function() {
+            $('#loading').hide();
+        })
+    </script>
     @if (auth()->user()->role_id == 3)
         <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
         <script type="text/javascript">
-            $(document).ready(function() {
-                $('#loading').hide();
-            })
             let html5QrcodeScanner = new Html5QrcodeScanner(
                 "reader", {
                     fps: 10,
@@ -191,7 +193,7 @@
                     },
 
                     success: function(res) {
-                        // console.log(res);
+                        console.log(res);
 
                         // console.log(e)
 

@@ -89,7 +89,7 @@ class BarcodeController extends Controller
             $cek = RekapAbsen::where(
                 'id_mahasiswa',
                 $mahasiswa->id
-            )->whereDate('tanggal', date('Y-m-d', strtotime($rekap->tanggal)))->first();
+            )->whereDate('tanggal', date('Y-m-d', strtotime(now())))->first();
             // dd($cek);
             if ($cek) {
                 return response()->json([
