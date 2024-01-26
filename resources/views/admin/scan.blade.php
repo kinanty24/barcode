@@ -70,21 +70,27 @@
         })
     </script>
     @if (auth()->user()->role_id == 2)
-        <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.7/html5-qrcode.min.js" integrity="sha512-dH3HFLqbLJ4o/3CFGVkn1lrppE300cfrUiD2vzggDAtJKiCClLKjJEa7wBcx7Czu04Xzgf3jMRvSwjVTYtzxEA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
         <script type="text/javascript">
-            let html5QrcodeScanner = new Html5QrcodeScanner(
-                "reader", {
-                    fps: 10,
-                    qrbox: {
-                        width: 250,
-                        height: 250
-                    }
-                },
-                /* verbose= */
-                false);
+
+        function domReady(fn){
+            if(document.readyState==='complete'||document.readyState==='interactive'){
+                setTimeout(fn,1)
+            }else{
+                document.addEventListener("DOMContentLoaded",fn)
+            }
+        }
+
+        domReady(function(){
+            var lastResult,countResult=0;
 
             function onScanSuccess(decodedText, decodedResult, event) {
+                if(decodedText!==lastResult){
+                    ++countResult;
+                    lastResult=decodedText
+                }
+
                 // event.preventDefault();
                 // handle the scanned code as you like, for example:
                 // console.log(`Code matched = ${decodedText}`, decodedResult);
@@ -105,41 +111,54 @@
 
 
 
-                        // if (res['status'] == 200) {
+                        if (res['status'] == 200) {
 
-                        //     Swal.fire({
-                        //         title: "Terima Kasih!",
-                        //         text: "Anda Telah Berhasil Absen Mata Kuliah " + res['data']['nama'],
-                        //         icon: "success",
-                        //         showConfirmButton: false,
-                        //         timer: 1500
-                        //     }).then(function(result) {
-                        //         html5QrcodeScanner.pause().then(function(result) {
-                        //             html5QrcodeScanner.resume()
-                        //         })
-                        //     })
+                            Swal.fire({
+                                title: "Terima Kasih!",
+                                text: "Anda Telah Berhasil Absen Mata Kuliah " + res['data']['nama'],
+                                icon: "success",
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(function(result) {
+                                html5QrcodeScanner.pause()
+                                }).then(function(result) {
+                                    html5QrcodeScanner.resume()
+                            })
 
-                        // } else {
+                        } else {
 
 
-                        //     Swal.fire({
-                        //         title: "Absen Gagal",
-                        //         text: "Hari ini anda telah absen mata kuliah " + res['data']['nama'],
-                        //         icon: "error",
-                        //         showConfirmButton: false,
-                        //         timer: 1500
-                        //     }).then(function(result) {
-                        //         html5QrcodeScanner.pause().then(function(result) {
-                        //             html5QrcodeScanner.resume()
-                        //         })
-                        //     })
+                            Swal.fire({
+                                title: "Absen Gagal",
+                                text: "Hari ini anda telah absen mata kuliah " + res['data']['nama'],
+                                icon: "error",
+                                showConfirmButton: false,
+                                timer: 1500
 
-                        // }
+                            }).then(function(result) {
+                                html5QrcodeScanner.pause()
+                                }).then(function(result) {
+                                    html5QrcodeScanner.resume()
+                            })
+
+                        }
 
                     }
                 })
 
             }
+            let html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", {
+                    fps: 10,
+                    qrbox: {
+                        width: 250,
+                        height: 250
+                    }
+                },
+                /* verbose= */
+              );
+
+
 
             // function onScanFailure(error) {
             //     // handle scan failure, usually better to ignore and keep scanning.
@@ -148,6 +167,10 @@
             // }
 
             html5QrcodeScanner.render(onScanSuccess);
+        })
+
+
+
         </script>
     @endif
 @endsection
