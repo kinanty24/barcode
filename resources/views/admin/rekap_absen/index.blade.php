@@ -67,20 +67,8 @@
                                             {{-- <th>Aksi</th> --}}
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @foreach ($rekapAbsen as $absen)
-                                            <tr>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $absen->mahasiswa->nama }}</td>
+                                    <tbody id="isiTable">
 
-                                                <td>{{ Carbon\Carbon::parse($absen->tanggal)->isoFormat("dddd, D MMMM Y") }}
-                                                </td>
-                                                {{-- <td>
-                                                    <a href="{{ route('rekap_absen.show', $absen->id) }}"
-                                                        class="btn btn-info">Lihat Detail</a>
-                                                </td> --}}
-                                            </tr>
-                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -95,11 +83,43 @@
 
 @section("js")
     <script>
+        var dosen = {{ app("request")->input("dosen") }}
+        var tanggal = {{ app("request")->input("tanggal") }}
+
+        function liveReload() {
+
+            $.ajax({
+                type: 'GET',
+                url: `{{ url("api/mahasiswa/liveReload") }}?dosen=${dosen}&tanggal=${tanggal}`,
+                success: function(res) {
+                    console.log(res)
+                    var tbody = '';
+                    if (res['data'].length > 0) {
+                        for (var i = 0; i < res['data'].length; i++) {
+                            tbody += `<tr>
+        <td>${i+1}</td>
+        <td>${res['data'][i]['mahasiswa']['nama']}</td>
+        <td>${res['data'][i]['tanggal']}</td>
+    </tr>`
+                        }
+                        $('#isiTable').html(tbody)
+                    }
+                }
+            })
+        }
+        liveReload();
         $(document).ready(function() {
-            $('#datatable').DataTable({
+
+            var table = $('#datatable').DataTable({
                 dom: 'Bfrtip',
                 buttons: ['excel', 'pdf'],
+
+
+
             })
+            setInterval(function() {
+                liveReload()
+            }, 5000);
         })
     </script>
 @endsection

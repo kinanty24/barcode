@@ -17,7 +17,7 @@ class LoginController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
-            'password' => ['required'],
+            'password' => ['required',],
             // 'g-recaptcha-response' => 'required|captcha'
 
         ], [
@@ -28,18 +28,15 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            // Login berhasil
+            $request->session()->regenerate();
+            return redirect()->intended('/home');
 
+            // return back()->with('error', 'Akun anda sedang login di tempat lain');
 
-
-
-                $request->session()->regenerate();
-
-                return redirect()->intended('/home');
-
-                // return back()->with('error', 'Akun anda sedang login di tempat lain');
-
+        } else {
+            return back()->with('error', 'Email atau Kata sandi salah');
         }
-        return back()->with('error', 'Email atau Kata sandi salah');
     }
 
     public function logout(Request $request)

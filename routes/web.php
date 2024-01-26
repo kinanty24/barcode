@@ -61,3 +61,5 @@ Route::get('rekap_absen/filter', [RekapAbsenController::class, 'filter'])->middl
 Route::get('rekap_absen/index', [RekapAbsenController::class, 'index'])->middleware(['auth'])->name('rekap_absen.index');
 Route::get('rekap_absen/store', [RekapAbsenController::class, 'store'])->middleware(['auth'])->name('rekap_absen.store');
 // Route::get('rekap_absen/filter','RekapAbsenController@filter')->middleware(['auth'])->name('rekap_absen.filter');
+
+Route::get('scan', [HomeController::class, 'scan'])->middleware(['auth'])->name('scan');

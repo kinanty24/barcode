@@ -54,17 +54,10 @@ class MahasiswaController extends Controller
             return redirect()->back()->withInput();
         }
 
-        $createUser = User::create([
-            'role_id' => 3,
-            'name' => $request->nama,
-            'email' => $request->email,
-            'password' => Hash::make('123'),
-        ]);
 
         $mahasiswa = new Mahasiswa();
 
         $mahasiswa->nama = $request->nama;
-        $mahasiswa->user_id = $createUser->id;
         $mahasiswa->nim = $request->nim;
         $mahasiswa->ttl = $request->ttl;
         $mahasiswa->agama = $request->agama;

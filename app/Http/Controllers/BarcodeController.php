@@ -74,11 +74,11 @@ class BarcodeController extends Controller
     {
         // dd($request->all());
         $kode = $request->code;
-        $mahasiswa = Mahasiswa::where('user_id', auth()->user()->id)->first();
+        $mahasiswa = Mahasiswa::where('nim', $kode)->first();
         // $mahasiswa = Mahasiswa::where('n')
-        $dosen = Dosen::with('matkul')->where('barcode', $kode)->first();
+        $dosen = Dosen::with('matkul')->where('user_id', auth()->user()->id)->first();
         // dd($dosen);
-
+        // dd($mahasiswa);
         $rekap = RekapAbsen::where([
             'id_mahasiswa' => $mahasiswa->id,
 
@@ -95,7 +95,8 @@ class BarcodeController extends Controller
                 return response()->json([
                     'message' => 'Error',
                     'status' => '400',
-                    'data' => $dosen
+                    'data' => $mahasiswa
+
 
                 ]);
             }
@@ -109,7 +110,7 @@ class BarcodeController extends Controller
         return response()->json([
             'message' => 'success',
             'status' => '200',
-            'data' => $dosen
+            'data' => $mahasiswa
         ]);
 
 
@@ -119,5 +120,17 @@ class BarcodeController extends Controller
         //     'kode_mhs' => $kode_mhs,
         //     'tgl_masuk' => date('Y-m-d', strtotime(now()))
         // ]);
+    }
+
+
+    public function reload(Request $request)
+    {
+        $mahasiswa = RekapAbsen::where('id_dosen', $request->dosen)->whereDate('tanggal', date('Y-m-d', strtotime($request->tanggal)))->with('mahasiswa')->get();;
+
+        return response()->json([
+            'message' => 'success',
+            'status' => 200,
+            'data' => $mahasiswa
+        ]);
     }
 }

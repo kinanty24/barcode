@@ -8,12 +8,20 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index(){
+    public function index()
+    {
 
-        $dosen = Dosen::with('matkul')->where('nama',auth()->user()->name)->first();
-        $mahasiswa = Mahasiswa::where('nama',auth()->user()->name)->first();
-        $title="Dashboard";
+        $dosen = Dosen::with('matkul')->where('nama', auth()->user()->name)->first();
+        $mahasiswa = Mahasiswa::where('nama', auth()->user()->name)->first();
+        $title = "Dashboard";
 
-        return view('admin.index',compact('title','dosen','mahasiswa'));
+        return view('admin.index', compact('title', 'dosen', 'mahasiswa'));
+    }
+
+    public function scan()
+    {
+        $title = "Scan";
+
+        return view('admin.scan', compact('title'));
     }
 }

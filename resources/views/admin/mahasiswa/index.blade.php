@@ -38,6 +38,7 @@
                                             <th>Jenis Kelamin</th>
                                             <th>Agama</th>
                                             <th>Alamat</th>
+                                            <th>Barcode</th>
                                             <th>Actions</th>
 
                                         </tr>
@@ -52,6 +53,7 @@
                                                 <td>{{ ucwords(strtolower($item->jk)) }}</td>
                                                 <td>{{ ucwords(strtolower($item->agama)) }}</td>
                                                 <td>{{ ucwords(strtolower($item->alamat)) }}</td>
+                                                <td>{!! DNS2D::getBarcodeHTML((string) $item->nim, "QRCODE", 7, 7) !!} </td>
                                                 <td>
                                                     <a href="#" data-bs-toggle="modal"
                                                         data-bs-target="#exampleModal{{ $item->id }}"><i
@@ -84,10 +86,7 @@
                                                                     value="{{ ucwords(strtolower($item->nama)) }}"
                                                                     required>
                                                                 <label for="" class="mt-2">Email</label>
-                                                                <input type="email" name="email"
-                                                                    class="form-control mt-2"
-                                                                    value="{{ ucwords(strtolower($item->user->email)) }}"
-                                                                    required>
+
                                                                 <label for="" class="mt-2">NIM</label>
                                                                 <input type="number" name="nim"
                                                                     class="form-control mt-2"
@@ -170,8 +169,7 @@
                         @csrf
                         <label for="" class="mt-2">Nama Mahasiswa</label>
                         <input type="text" name="nama" class="form-control mt-2" required>
-                        <label for="" class="mt-2">Email</label>
-                        <input type="email" name="email" class="form-control mt-2" required>
+
                         <label for="" class="mt-2">NIM</label>
                         <input type="number" name="nim" class="form-control mt-2" required>
                         <label for="" class="mt-2">Prodi</label>

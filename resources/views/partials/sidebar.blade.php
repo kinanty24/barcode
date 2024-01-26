@@ -212,12 +212,18 @@
                 </a>
             </li><!-- End F.A.Q Page Nav -->
         @endif
-        @if (auth()->user()->role_id != 3)
+        @if (auth()->user()->role_id == 2)
             <li class="nav-item">
                 <a class="nav-link @if ($title == "Data Rekap Absen" || $title == "Filter Rekap Absen") @else collapsed @endif"
                     href="{{ route("rekap_absen.filter") }}">
                     <i class="bi bi-envelope"></i>
                     <span>Rekap Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @if ($title == "Scan" || $title == "Scan") @else collapsed @endif" href="{{ route("scan") }}">
+                    <i class="bi bi-envelope"></i>
+                    <span>Scan</span>
                 </a>
             </li><!-- End Contact Page Nav -->
         @endif
